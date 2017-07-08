@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	<script type="text/javascript" src="scripts/jquery-3.2.0.js"></script>
+	<style type="text/css">
+		*{margin: 0;padding: 0}
+		.container{width: 600px;margin: 0 auto;font-family: "microsoft yahei",sans-serif;font-size: 12px;}
+		.head{text-align: center;}
+		.searchbar{width: 600px;height: 40px;line-height: 40px;}
+		.searchbar #search{width: 79%;height:38px;-webkit-appearance:none;border:#66CCCC solid 1px;}
+		.searchbar #btn{width: 20%;height:40px;border:none;background-color: #66CCCC;color: #fff;font-weight: bold;}
+		.head #info{font-size: 16px;height: 24px;line-height:24px; }
+		.search-result{display: none; width: 598px;border: 1px solid #66CCCC;margin-top: 0;}
+		.search-result li{padding: 10px;border-bottom: 1px dotted #ccc;list-style-type: none;}
+		.search-result li h3{line-height: 20px;}
+		.search-result li img{display: inline-block;margin-right: 10px;}
+		.search-result a:-webkit-any-link {color:#66cccc;
+    			cursor: pointer;text-decoration: none;
+}
+	</style> 
+</head>
+<body>
+<div class="head container">
+	<a href="https://en.wikipedia.org/wiki/">
+	<img src="img/wikilogo.jpg"></a><br>
+	<div class="searchbar">
+		<input type="text" id="search">
+		<button id="btn">Search</button>
+	</div>
+	<p id="info"></p>
+</div>
+<div class="search-result container">
+	<ol>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+		<li>
+			<h3><a href=""></a></h3>
+			<div></div>
+		</li>
+	</ol>
+</div>
+</body>
+<script>
+$(function(){
+	 var url = "https://en.wikipedia.org/w/api.php?format=json&action=query&generator=search&gsrnamespace=0&gsrlimit=10&prop=pageimages|extracts&pilimit=max&exintro&explaintext&exsentences=1&exlimit=max&origin=*&gsrsearch=";
+	 function searchPro(url){
+		$.ajax({
+			url:url,
+			success:function(data){
+				//获取返回的pageid
+				var x = [];
+				for(var pageid in data.query.pages){
+					x.push(pageid);
+				}
+				//获取每个pageid的标题、摘要、图片信息
+				$(x).each(function(index,element){
+					var page = data.query.pages[x[index]];
+					var extract = page.extract;
+					var title = page.title;
+					var imgsrc='';
+					try{
+						imgsrc = page.thumbnail.source;
+					}catch(e){
+						var imgcontent = '';
+					}
+					if(imgsrc){
+							imgcontent = "<img src = '"+imgsrc+"'>";
+						}
+					imgcontent+=extract;
+					//对标题进行编码
+					var href = "https://en.wikipedia.org/wiki/"+encodeURIComponent(title);
+					//获取对应的li项
+					var list = $('.search-result ol li').eq(index);
+					list.find('a').text(title).attr('href',href);
+					list.find('div').html(imgcontent);
+				});
+			},
+			error:function(jqXHR){
+				console.log(jqXHR.status);
+			}
+		});
+	}
+	$('#btn').click(function(){
+		//将info区域清空
+		$('#info').html('');
+		var search = $('#search').val();
+		if(search){
+			var searchurl = url+search;
+			searchPro(searchurl);
+			$('.search-result').css('display','block');
+		}else{
+			$('#info').html('Please enter something.')
+			$('.search-result').css('display','none');
+		}
+	});
+	$('#search').keyup(function(event){
+		if (event.keyCode==13) {
+			$('#btn').click();
+		}
+	});
+});
+</script>
+</html>
