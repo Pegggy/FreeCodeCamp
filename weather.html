@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	<script type="text/javascript" src="scripts/jquery-3.2.0.js"></script>
+</head>
+<body>
+<h1>请输入需要查询的城市</h1>
+<input type="text" id="cityname">
+<button id="btn">查询</button>
+<div class="today-weather">
+	<h1>今天天气</h1>
+	<div id="city">城市：</div>
+	<div id="weather">天气：</div>
+	<div id="temperature">温度：</div>
+	<div id="winddirection">风向：</div>
+	<div id="windpower">风力：</div>
+	<div id="humidity">湿度：</div>
+</div>
+</body>
+<script>
+$(function(){
+	$('#btn').click(function(){
+		var span = $('span');
+		var city = $('#cityname').val();
+		if(span){
+			span.remove();
+		}
+		if(city){
+			searchWeather();
+		}
+	});
+	function searchWeather(){
+		$.ajax({
+			type:"GET",
+			url:"http://restapi.amap.com/v3/weather/weatherInfo?parameters",
+			data:{
+				key:'d0c57b45b7c0c71bf4187c40abdca809',
+				city:$('#cityname').val(),
+				extensions:"base",
+				output:'JSON'
+			},
+			success:function(data){
+				for(prop in data.lives[0]){
+					$('#'+prop).append('<span>'+data.lives[0][prop]+'</span');
+				}
+			},
+			error:function(jqXHR){
+				console.log(jqXHR.status);
+			}
+		});
+	}
+});
+</script>
+</html>
