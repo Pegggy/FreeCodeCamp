@@ -35,6 +35,7 @@ $(function(){
 		$.ajax({
 			type:"GET",
 			url:"http://restapi.amap.com/v3/weather/weatherInfo?parameters",
+			dataType:'jsonp',
 			data:{
 				key:'d0c57b45b7c0c71bf4187c40abdca809',
 				city:$('#cityname').val(),
